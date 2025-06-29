@@ -13,22 +13,36 @@ export interface ClockWidget {
   displayName: string
   type: 'analog' | 'digital' | 'both'
   size: 'small' | 'medium' | 'large'
-  visible: boolean
   position: number
+}
+
+export interface FavoriteTimezone {
+  timezone: string
+  displayName: string
 }
 
 export const useClockStore = defineStore('clock', () => {
   const widgets = ref<ClockWidget[]>([])
+  const favoriteTimezones = ref<FavoriteTimezone[]>([])
   const currentTime = ref(dayjs())
 
   // ローカルストレージから設定を読み込み
   const loadFromStorage = () => {
-    const stored = localStorage.getItem('world-clock-widgets')
-    if (stored) {
+    const storedWidgets = localStorage.getItem('world-clock-widgets')
+    if (storedWidgets) {
       try {
-        widgets.value = JSON.parse(stored)
+        widgets.value = JSON.parse(storedWidgets)
       } catch (error) {
         console.error('Failed to load widgets from storage:', error)
+      }
+    }
+
+    const storedFavorites = localStorage.getItem('world-clock-favorites')
+    if (storedFavorites) {
+      try {
+        favoriteTimezones.value = JSON.parse(storedFavorites)
+      } catch (error) {
+        console.error('Failed to load favorites from storage:', error)
       }
     }
   }
@@ -36,6 +50,7 @@ export const useClockStore = defineStore('clock', () => {
   // ローカルストレージに設定を保存
   const saveToStorage = () => {
     localStorage.setItem('world-clock-widgets', JSON.stringify(widgets.value))
+    localStorage.setItem('world-clock-favorites', JSON.stringify(favoriteTimezones.value))
   }
 
   // ウィジェットを追加
@@ -46,11 +61,33 @@ export const useClockStore = defineStore('clock', () => {
       displayName,
       type,
       size: 'medium',
-      visible: true,
       position: widgets.value.length
     }
     widgets.value.push(newWidget)
     saveToStorage()
+  }
+
+  // お気に入りタイムゾーンを追加
+  const addFavoriteTimezone = (timezone: string, displayName: string) => {
+    const exists = favoriteTimezones.value.some(fav => fav.timezone === timezone)
+    if (!exists) {
+      favoriteTimezones.value.push({ timezone, displayName })
+      saveToStorage()
+    }
+  }
+
+  // お気に入りタイムゾーンを削除
+  const removeFavoriteTimezone = (timezone: string) => {
+    const index = favoriteTimezones.value.findIndex(fav => fav.timezone === timezone)
+    if (index !== -1) {
+      favoriteTimezones.value.splice(index, 1)
+      saveToStorage()
+    }
+  }
+
+  // タイムゾーンがお気に入りかどうかチェック
+  const isFavoriteTimezone = (timezone: string) => {
+    return favoriteTimezones.value.some(fav => fav.timezone === timezone)
   }
 
   // ウィジェットを削除
@@ -66,14 +103,7 @@ export const useClockStore = defineStore('clock', () => {
     }
   }
 
-  // ウィジェットの表示/非表示を切り替え
-  const toggleWidgetVisibility = (id: string) => {
-    const widget = widgets.value.find(w => w.id === id)
-    if (widget) {
-      widget.visible = !widget.visible
-      saveToStorage()
-    }
-  }
+
 
   // ウィジェットのサイズを変更
   const updateWidgetSize = (id: string, size: ClockWidget['size']) => {
@@ -107,11 +137,9 @@ export const useClockStore = defineStore('clock', () => {
     currentTime.value = dayjs()
   }
 
-  // 表示されているウィジェットのみを取得
-  const visibleWidgets = computed(() => 
-    widgets.value
-      .filter(w => w.visible)
-      .sort((a, b) => a.position - b.position)
+  // 全てのウィジェットを位置順で取得
+  const sortedWidgets = computed(() => 
+    widgets.value.sort((a, b) => a.position - b.position)
   )
 
   // 特定のタイムゾーンの現在時刻を取得
@@ -121,13 +149,16 @@ export const useClockStore = defineStore('clock', () => {
 
   return {
     widgets,
+    favoriteTimezones,
     currentTime,
-    visibleWidgets,
+    sortedWidgets,
     loadFromStorage,
     saveToStorage,
     addWidget,
     removeWidget,
-    toggleWidgetVisibility,
+    addFavoriteTimezone,
+    removeFavoriteTimezone,
+    isFavoriteTimezone,
     updateWidgetSize,
     updateWidgetType,
     reorderWidgets,

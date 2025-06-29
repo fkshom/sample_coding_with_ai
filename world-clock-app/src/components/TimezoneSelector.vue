@@ -4,6 +4,25 @@
       <h2>新しい時計を追加</h2>
     </div>
     
+    <!-- お気に入りタイムゾーン -->
+    <div v-if="clockStore.favoriteTimezones.length > 0" class="favorites-section">
+      <h3>お気に入りから選択</h3>
+      <div class="favorites-grid">
+        <button
+          v-for="favorite in clockStore.favoriteTimezones"
+          :key="favorite.timezone"
+          @click="selectFromFavorite(favorite)"
+          class="favorite-item"
+          type="button"
+        >
+          <span class="favorite-name">{{ favorite.displayName }}</span>
+          <span class="favorite-timezone">{{ favorite.timezone }}</span>
+        </button>
+      </div>
+    </div>
+
+    <div class="divider">または</div>
+
     <form @submit.prevent="addClock" class="add-form">
       <div class="form-group">
         <label for="timezone">タイムゾーン:</label>
@@ -142,6 +161,10 @@ watch(selectedTimezone, (newTimezone) => {
   }
 })
 
+const selectFromFavorite = (favorite: { timezone: string; displayName: string }) => {
+  clockStore.addWidget(favorite.timezone, favorite.displayName, clockType.value)
+}
+
 const addClock = () => {
   if (selectedTimezone.value && displayName.value) {
     clockStore.addWidget(selectedTimezone.value, displayName.value, clockType.value)
@@ -169,6 +192,80 @@ const addClock = () => {
   color: #333;
   font-size: 1.5rem;
   font-weight: 600;
+}
+
+.favorites-section {
+  margin-bottom: 1.5rem;
+}
+
+.favorites-section h3 {
+  margin: 0 0 1rem 0;
+  color: #555;
+  font-size: 1.1rem;
+  font-weight: 500;
+}
+
+.favorites-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 0.75rem;
+  margin-bottom: 1rem;
+}
+
+.favorite-item {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  padding: 0.75rem;
+  background: #f8f9fa;
+  border: 2px solid #e9ecef;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s;
+  text-align: left;
+}
+
+.favorite-item:hover {
+  background: #e3f2fd;
+  border-color: #2196f3;
+  transform: translateY(-1px);
+}
+
+.favorite-name {
+  font-weight: 500;
+  color: #333;
+  margin-bottom: 0.25rem;
+}
+
+.favorite-timezone {
+  font-size: 0.8rem;
+  color: #666;
+}
+
+.divider {
+  text-align: center;
+  margin: 1.5rem 0;
+  color: #999;
+  font-size: 0.9rem;
+  position: relative;
+}
+
+.divider::before,
+.divider::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  width: 40%;
+  height: 1px;
+  background: #ddd;
+}
+
+.divider::before {
+  left: 0;
+}
+
+.divider::after {
+  right: 0;
 }
 
 .add-form {
