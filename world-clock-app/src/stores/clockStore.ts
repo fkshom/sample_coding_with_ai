@@ -142,6 +142,9 @@ export const useClockStore = defineStore('clock', () => {
     widgets.value.sort((a, b) => a.position - b.position)
   )
 
+  // 表示可能なウィジェットを取得（現在は全て表示）
+  const visibleWidgets = computed(() => sortedWidgets.value)
+
   // 特定のタイムゾーンの現在時刻を取得
   const getTimeForTimezone = (timezone: string) => {
     return currentTime.value.tz(timezone)
@@ -152,6 +155,7 @@ export const useClockStore = defineStore('clock', () => {
     favoriteTimezones,
     currentTime,
     sortedWidgets,
+    visibleWidgets,
     loadFromStorage,
     saveToStorage,
     addWidget,
