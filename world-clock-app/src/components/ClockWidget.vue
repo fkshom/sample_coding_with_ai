@@ -42,7 +42,7 @@
       </div>
     </div>
     
-    <div class="clock-container" v-if="widget.visible">
+    <div class="clock-container">
       <div v-if="widget.type === 'analog' || widget.type === 'both'" class="clock-section">
         <AnalogClock :time="currentTime" :size="widget.size" />
       </div>
@@ -119,6 +119,7 @@ watch(() => props.widget.size, (newSize) => {
   margin: 1rem;
   transition: all 0.3s ease;
   border: 2px solid transparent;
+  cursor: grab;
 }
 
 .clock-widget:hover {
@@ -218,5 +219,21 @@ watch(() => props.widget.size, (newSize) => {
   opacity: 0.7;
   transform: rotate(5deg);
   z-index: 1000;
+}
+
+.clock-widget:active {
+  cursor: grabbing;
+}
+
+/* ドラッグアンドドロップ時のアニメーション改善 */
+.clock-widget.sortable-chosen {
+  transform: scale(1.02);
+  box-shadow: 0 8px 30px rgba(102, 126, 234, 0.3);
+}
+
+.clock-widget.sortable-drag {
+  transform: scale(1.05) rotate(2deg);
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.2);
+  cursor: grabbing;
 }
 </style>

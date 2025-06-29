@@ -30,6 +30,11 @@ onUnmounted(() => {
 const handleDragEnd = () => {
   clockStore.reorderWidgets(clockStore.sortedWidgets)
 }
+
+const handleDragMove = (evt: any) => {
+  // ドラッグ中のリアルタイム更新を許可
+  return true
+}
 </script>
 
 <template>
@@ -60,17 +65,23 @@ const handleDragEnd = () => {
           v-else
           v-model="clockStore.sortedWidgets"
           @end="handleDragEnd"
+          @move="handleDragMove"
           class="draggable-container"
-          :animation="200"
+          :animation="300"
+          :force-fallback="false"
+          :fallback-tolerance="0"
           ghost-class="ghost"
           chosen-class="chosen"
           drag-class="drag"
+          :group="{ name: 'clocks', pull: true, put: true }"
+          item-key="id"
         >
-          <ClockWidget
-            v-for="widget in clockStore.visibleWidgets"
-            :key="widget.id"
-            :widget="widget"
-          />
+          <template #item="{ element: widget }">
+            <ClockWidget
+              :key="widget.id"
+              :widget="widget"
+            />
+          </template>
         </VueDraggable>
       </div>
     </main>
@@ -172,19 +183,25 @@ const handleDragEnd = () => {
 
 /* ドラッグアンドドロップのスタイル */
 .ghost {
-  opacity: 0.5;
-  background: #c8ebfb;
-  border: 2px dashed #42b883;
+  opacity: 0.3;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  border: 2px dashed #667eea;
+  border-radius: 16px;
+  transform: scale(0.95);
 }
 
 .chosen {
-  opacity: 0.8;
-  transform: scale(1.05);
+  opacity: 0.9;
+  transform: scale(1.02);
+  box-shadow: 0 8px 30px rgba(102, 126, 234, 0.3);
+  transition: all 0.2s ease;
 }
 
 .drag {
-  transform: rotate(5deg);
+  transform: scale(1.05) rotate(2deg);
   z-index: 1000;
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.2);
+  transition: all 0.3s ease;
 }
 
 @media (max-width: 768px) {

@@ -1,6 +1,6 @@
 <template>
   <div class="analog-clock" :class="sizeClass">
-    <svg :width="size" :height="size" viewBox="0 0 200 200">
+    <svg :width="clockSize" :height="clockSize" viewBox="0 0 200 200">
       <!-- 時計の外枠 -->
       <circle
         cx="100"
@@ -96,12 +96,12 @@ interface Props {
 }
 
 const props = withDefaults(defineProps<Props>(), {
-  size: 'medium' as const
+  size: 'medium'
 })
 
 const sizeClass = computed(() => `analog-clock--${props.size}`)
 
-const size = computed(() => {
+const clockSize = computed(() => {
   switch (props.size) {
     case 'small': return 120
     case 'medium': return 200
