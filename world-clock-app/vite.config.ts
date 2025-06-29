@@ -15,6 +15,11 @@ export default defineConfig({
       '@': fileURLToPath(new URL('./src', import.meta.url))
     },
   },
+  base: '/sample_coding_with_ai/',
+  build: {
+    outDir: '../docs',
+    emptyOutDir: true,
+  },
   server: {
     host: '0.0.0.0',
     port: 12000,

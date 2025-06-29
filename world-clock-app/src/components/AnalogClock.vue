@@ -96,7 +96,7 @@ interface Props {
 }
 
 const props = withDefaults(defineProps<Props>(), {
-  size: 'medium'
+  size: 'medium' as const
 })
 
 const sizeClass = computed(() => `analog-clock--${props.size}`)
