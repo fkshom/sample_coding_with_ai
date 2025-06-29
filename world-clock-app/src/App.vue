@@ -28,7 +28,7 @@ onUnmounted(() => {
 })
 
 const handleDragEnd = () => {
-  clockStore.reorderWidgets(clockStore.visibleWidgets)
+  clockStore.reorderWidgets(clockStore.sortedWidgets)
 }
 </script>
 
@@ -51,14 +51,14 @@ const handleDragEnd = () => {
       </div>
 
       <div class="clocks-container">
-        <div v-if="clockStore.visibleWidgets.length === 0" class="empty-state">
+        <div v-if="clockStore.sortedWidgets.length === 0" class="empty-state">
           <h2>時計がありません</h2>
           <p>「時計を追加」ボタンをクリックして、最初の時計を追加してください。</p>
         </div>
 
         <VueDraggable
           v-else
-          v-model="clockStore.visibleWidgets"
+          v-model="clockStore.sortedWidgets"
           @end="handleDragEnd"
           class="draggable-container"
           :animation="200"

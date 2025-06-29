@@ -24,11 +24,12 @@
         </select>
         
         <button 
-          @click="toggleVisibility"
-          class="visibility-btn"
-          :title="widget.visible ? '非表示' : '表示'"
+          @click="toggleFavorite"
+          class="favorite-btn"
+          :class="{ 'is-favorite': isFavorite }"
+          :title="isFavorite ? 'お気に入りから削除' : 'お気に入りに追加'"
         >
-          {{ widget.visible ? '👁️' : '👁️‍🗨️' }}
+          {{ isFavorite ? '⭐' : '☆' }}
         </button>
         
         <button 
@@ -75,6 +76,10 @@ const currentTime = computed(() =>
   clockStore.getTimeForTimezone(props.widget.timezone)
 )
 
+const isFavorite = computed(() => 
+  clockStore.isFavoriteTimezone(props.widget.timezone)
+)
+
 const updateType = () => {
   clockStore.updateWidgetType(props.widget.id, localType.value)
 }
@@ -83,8 +88,12 @@ const updateSize = () => {
   clockStore.updateWidgetSize(props.widget.id, localSize.value)
 }
 
-const toggleVisibility = () => {
-  clockStore.toggleWidgetVisibility(props.widget.id)
+const toggleFavorite = () => {
+  if (isFavorite.value) {
+    clockStore.removeFavoriteTimezone(props.widget.timezone)
+  } else {
+    clockStore.addFavoriteTimezone(props.widget.timezone, props.widget.displayName)
+  }
 }
 
 const removeWidget = () => {
@@ -162,19 +171,26 @@ watch(() => props.widget.size, (newSize) => {
   background: white;
 }
 
-.visibility-btn,
+.favorite-btn,
 .remove-btn {
   background: none;
   border: none;
   cursor: pointer;
   padding: 0.25rem;
   border-radius: 4px;
-  transition: background-color 0.2s;
+  transition: all 0.2s;
+  font-size: 1rem;
 }
 
-.visibility-btn:hover,
+.favorite-btn:hover,
 .remove-btn:hover {
   background-color: #f0f0f0;
+  transform: scale(1.1);
+}
+
+.favorite-btn.is-favorite {
+  color: #ffd700;
+  text-shadow: 0 0 4px rgba(255, 215, 0, 0.5);
 }
 
 .clock-container {
