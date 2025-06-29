@@ -31,7 +31,9 @@ export const useClockStore = defineStore('clock', () => {
     const storedWidgets = localStorage.getItem('world-clock-widgets')
     if (storedWidgets) {
       try {
-        widgets.value = JSON.parse(storedWidgets)
+        const loadedWidgets = JSON.parse(storedWidgets)
+        // positionでソートして格納
+        widgets.value = loadedWidgets.sort((a: ClockWidget, b: ClockWidget) => a.position - b.position)
       } catch (error) {
         console.error('Failed to load widgets from storage:', error)
       }

@@ -28,7 +28,12 @@ onUnmounted(() => {
 })
 
 const handleDragEnd = () => {
-  clockStore.reorderWidgets(clockStore.sortedWidgets)
+  // VueDraggableが既にwidgets配列を更新しているので、
+  // 各ウィジェットのpositionプロパティを現在のインデックスに更新
+  clockStore.widgets.forEach((widget, index) => {
+    widget.position = index
+  })
+  clockStore.saveToStorage()
 }
 
 const handleDragMove = (evt: any) => {
@@ -56,14 +61,14 @@ const handleDragMove = (evt: any) => {
       </div>
 
       <div class="clocks-container">
-        <div v-if="clockStore.sortedWidgets.length === 0" class="empty-state">
+        <div v-if="clockStore.widgets.length === 0" class="empty-state">
           <h2>時計がありません</h2>
           <p>「時計を追加」ボタンをクリックして、最初の時計を追加してください。</p>
         </div>
 
         <VueDraggable
           v-else
-          v-model="clockStore.sortedWidgets"
+          v-model="clockStore.widgets"
           @end="handleDragEnd"
           @move="handleDragMove"
           class="draggable-container"
