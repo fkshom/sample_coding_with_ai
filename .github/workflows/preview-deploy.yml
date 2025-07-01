@@ -18,6 +18,9 @@ jobs:
         with:
           node-version: '20'
 
+      - name: cd
+        run: cd world-clock-app
+        
       - name: Install dependencies
         run: npm install
 
