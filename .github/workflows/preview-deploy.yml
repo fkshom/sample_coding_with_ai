@@ -26,6 +26,15 @@ jobs:
       - name: Build the site
         run: npm run build
 
+      - name: list
+        run: ls ./docs || true
+
+      - name: list2
+        run: ls ../docs || true
+
+      - name: pwd
+        run: pwd
+
       - name: Get branch name
         id: vars
         run: |
@@ -37,5 +46,5 @@ jobs:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_branch: gh-pages
           destination_dir: preview/${{ steps.vars.outputs.branch }}
-          publish_dir: ./dist
+          publish_dir: ./docs
           keep_files: true  # ★本番のindex.htmlを消さないために重要
