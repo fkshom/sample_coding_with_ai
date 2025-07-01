@@ -16,7 +16,7 @@ export default defineConfig({
       '@': fileURLToPath(new URL('./src', import.meta.url))
     },
   },
-  base: './sample_coding_with_ai/',
+  base: './',
   build: {
     outDir: '../docs',
     emptyOutDir: true,
