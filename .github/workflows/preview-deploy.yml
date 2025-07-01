@@ -27,10 +27,10 @@ jobs:
         run: npm run build
 
       - name: list
-        run: ls ./docs
+        run: ls ./docs || true
 
       - name: list2
-        run: ls ../docs
+        run: ls ../docs || true
 
       - name: Get branch name
         id: vars
