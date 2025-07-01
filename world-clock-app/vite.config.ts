@@ -10,12 +10,13 @@ export default defineConfig({
     vue(),
     vueDevTools(),
   ],
+  
   resolve: {
     alias: {
       '@': fileURLToPath(new URL('./src', import.meta.url))
     },
   },
-  base: '/sample_coding_with_ai/',
+  base: './sample_coding_with_ai/',
   build: {
     outDir: '../docs',
     emptyOutDir: true,
