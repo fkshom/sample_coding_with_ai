@@ -65,8 +65,18 @@ export const useClockStore = defineStore('clock', () => {
       size: 'medium',
       position: widgets.value.length
     }
-    widgets.value.push(newWidget)
-    saveToStorage()
+    
+    // 配列を直接変更せず新しい配列を作成
+    widgets.value = [...widgets.value, newWidget]
+    
+    // ストレージ保存を確実に実行
+    try {
+      saveToStorage()
+      return true // 成功時はtrueを返す
+    } catch (error) {
+      console.error('保存に失敗しました:', error)
+      return false
+    }
   }
 
   // お気に入りタイムゾーンを追加
