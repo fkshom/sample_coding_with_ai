@@ -8,7 +8,9 @@ on:
 jobs:
   deploy-preview:
     runs-on: ubuntu-latest
-
+    defaults:
+      run:
+        working-directory: world-clock-app
     steps:
       - name: Checkout source
         uses: actions/checkout@v4
@@ -17,9 +19,6 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: '20'
-
-      - name: cd
-        run: cd world-clock-app
         
       - name: Install dependencies
         run: npm install
