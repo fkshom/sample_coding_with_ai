@@ -1,0 +1,39 @@
+name: Deploy preview to GitHub Pages
+
+on:
+  push:
+    branches:
+      - 'feature/**'
+
+jobs:
+  deploy-preview:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout source
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Build the site
+        run: npm run build
+
+      - name: Get branch name
+        id: vars
+        run: |
+          echo "##[set-output name=branch;]$(echo ${{ github.ref_name }})"
+
+      - name: Deploy to gh-pages under preview/branch-name
+        uses: peaceiris/actions-gh-pages@v4
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_branch: gh-pages
+          destination_dir: preview/${{ steps.vars.outputs.branch }}
+          publish_dir: ./dist
+          keep_files: true  # ★本番のindex.htmlを消さないために重要
